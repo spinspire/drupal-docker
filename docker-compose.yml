@@ -1,0 +1,37 @@
+version: '3.5'
+
+services:
+  web:
+    image: nginx:mainline-alpine
+    restart: unless-stopped
+    volumes:
+      - ${PWD}/drupal:/var/www
+      - ${PWD}/docker/nginx/conf.d:/etc/nginx/conf.d
+    depends_on:
+      - php
+  php:
+    # image: skilldlabs/php:8-fpm
+    # image: skilldlabs/php:81-fpm
+    # image: skilldlabs/php:82-fpm
+    image: spinspire/php:81-fpm
+    build: docker/php/. # image with pgsql support added
+    entrypoint: init/docker-entrypoint.sh
+    restart: unless-stopped
+    user: ${UID:-missingenv}:${GID:-missingenv}
+    # if you want to run php's built-in web-server instead of nginx
+    # working_dir: /var/www/web
+    # entrypoint: php -S 0.0.0.0:8000 .ht.router.php
+    # expose:
+    #   - 8000
+    working_dir: /var/www
+    volumes:
+      #provide better defaults for PHP settings
+      - ${PWD}/docker/php/conf.d/custom-cli.ini:/usr/local/etc/php/conf.d/zzz-custom.ini
+      - ${PWD}/docker/php/conf.d/custom-fpm.ini:/usr/local/etc/php-fpm/conf.d/zzz-custom.ini
+      - ${PWD}/drupal:/var/www
+    environment:
+      - HOME=/var/www
+      # generate with drush eval "var_dump(Drupal\Component\Utility\Crypt::randomBytesBase64(55))"
+      - DRUPAL_HASHSALT=something-random
+      # sqlite/mysql/pgsql
+      - DRUPAL_DBTYPE=sqlite

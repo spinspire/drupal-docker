@@ -1,0 +1,23 @@
+# three ways to use this file (in recommended order):
+# - copy <this-file> to docker-compose.override.yml and customize it
+# - docker compose -f docker-compose.yml -f <this-file>
+# - merge this file into docker-compose.yml
+version: '3.5'
+
+services:
+  db:
+    image: mariadb:10
+    restart: unless-stopped
+    volumes:
+      # mysql will store raw database files here
+      - db-data:/var/lib/mysql/data
+      # place database initialization *.sql and *.sql.gz file here
+      # - ${PWD}/db-init/mysql:/docker-entrypoint-initdb.d
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: drupal
+      MYSQL_USER: drupal
+      MYSQL_PASSWORD: drupal
+
+volumes:
+  db-data:

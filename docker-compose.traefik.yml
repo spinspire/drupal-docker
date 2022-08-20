@@ -1,0 +1,18 @@
+# three ways to use this file (in recommended order):
+# - copy <this-file> to docker-compose.override.yml and customize it
+# - docker compose -f docker-compose.yml -f <this-file>
+# - merge this file into docker-compose.yml
+version: '3.5'
+
+services:
+  web:
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-${USER}.rule=Host(`${HTTP_HOSTNAME}`)
+    networks:
+      - ${TRAEFIK_NETWORK}
+      - default
+
+networks:
+  ${TRAEFIK_NETWORK}:
+    external: true

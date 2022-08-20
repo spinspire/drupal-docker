@@ -1,0 +1,10 @@
+.composer
+.ash_history
+/.env
+/docker-compose.override.yml
+/drupal/.editorconfig
+/drupal/.gitattributes
+/drupal/.drush
+/drupal/drupal.sqlite
+/drupal/vendor
+/drupal/web
